@@ -290,6 +290,21 @@ class WhatsProt
         $this->sendNode($messsageNode);
     }
 
+    public function sendStatusUpdate($msgid, $txt)
+    {
+        $bodyNode = new ProtocolNode("body", null, null, $txt);
+        $serverNode = new ProtocolNode("server", null, null, "");
+        $xHash = array();
+        $xHash["xmlns"] = "jabber:x:event";
+        $xNode = new ProtocolNode("x", $xHash, array($serverNode), "");
+        $messageHash = array();
+        $messageHash["to"] = 's.us';
+        $messageHash["type"] = "chat";
+        $messageHash["id"] = $msgid;
+        $messsageNode = new ProtocolNode("message", $messageHash, array($xNode, $bodyNode), "");
+        $this->sendNode($messsageNode);
+    }
+
     public function Pong($msgid)
     {
         $whatsAppServer = $this->_whatsAppServer;
@@ -302,6 +317,15 @@ class WhatsProt
        	$messsageNode = new ProtocolNode("iq", $messageHash, null, "");
         $this->sendNode($messsageNode);
     }
+
+    public function sendNickname($nickname)
+    {
+        $messageHash = array();
+        $messageHash["name"] = $nickname;
+        $messsageNode = new ProtocolNode("presence", $messageHash, null, "");
+        $this->sendNode($messsageNode);
+    }
+
 
     protected function DebugPrint($debugMsg)
     {
