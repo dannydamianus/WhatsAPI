@@ -141,6 +141,24 @@ class WhatsProt
                 $this->sendNode($messageNode);
             }
         }
+        $receivedNode = $msg->getChild("received");
+        if ($receivedNode != null)
+        {
+            $xmlnsAttrib = $receivedNode->getAttribute("xmlns");
+            if (strcmp($xmlnsAttrib, "urn:xmpp:receipts") == 0)
+            {
+                $ackHash = array();
+                $ackHash["xmlns"] = "urn:xmpp:receipts";
+                $ackHash["type"] = "delivered";
+                $ackNode = new ProtocolNode("ack", $ackHash, null, "");
+                $messageHash = array();
+                $messageHash["to"] = $msg->getAttribute("from");
+                $messageHash["type"] = "chat";
+                $messageHash["id"] = $msg->getAttribute("id");
+                $messageNode = new ProtocolNode("message", $messageHash, array($ackNode), "");
+                $this->sendNode($messageNode);
+            }
+        }
     }
 
     protected function processInboundData($data)
